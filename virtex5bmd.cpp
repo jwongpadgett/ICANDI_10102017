@@ -943,6 +943,12 @@ int CVirtex5BMD::UpdateRuntimeRegisters(WDC_DEVICE_HANDLE hDev, unsigned char *m
 	Sleep(1);
 	// External clock control
 	ret = ReadWriteI2CRegister(hDev, FALSE, 0x4c000000, 0x18, m_adcVals[0x18], &relOut);
+	Sleep(1);	
+	// Clamp placement control
+	ret = ReadWriteI2CRegister(hDev, FALSE, 0x4c000000, 0x19, m_adcVals[0x19], &relOut);
+	Sleep(1);
+	// Clamp duration control
+	ret = ReadWriteI2CRegister(hDev, FALSE, 0x4c000000, 0x1A, m_adcVals[0x1A], &relOut);
 	Sleep(1);
 	// External clamping control
 	ret = ReadWriteI2CRegister(hDev, FALSE, 0x4c000000, 0x1B, m_adcVals[0x1B], &relOut);
