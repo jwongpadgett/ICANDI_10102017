@@ -2306,7 +2306,17 @@ void g_StimulusDeliveryFFT(int sx, int sy, BOOL bStimulus, int blockID)
 //	delete [] delta_y;
 }
 
+void CICANDIDoc::GetSysTime(CString &buf){
 
+time_t rawtime;
+struct tm * timeinfo;
+char buffer [80];
+time (&rawtime);
+timeinfo = localtime (&rawtime);
+strftime (buffer, 80, "%Y_%m_%d_%H_%M_%S_", timeinfo);
+buf = buffer;
+
+}
 
 
 /*
@@ -3975,12 +3985,15 @@ DWORD WINAPI CICANDIDoc::ThreadNetMsgProcess(LPVOID pParam)
 				break;
 			case 'V':
 				if (ext == "VPC") { //load prefix & create directory //12/15/2011
+					parent->GetSysTime(parent->m_VideoTimeStamp);
 					initials = msg.Left(msg.Find("\\",0)); //gives the prefix
 					g_viewMsgVideo->SetDlgItemText(IDC_EDITBOX_PREFIX, initials);
 					CreateDirectory((g_ICANDIParams.VideoFolderPath+initials), NULL);
-					parent->m_VideoFolder = g_ICANDIParams.VideoFolderPath +msg;
+					parent->m_VideoFolder = g_ICANDIParams.VideoFolderPath + initials + "\\" + parent->m_VideoTimeStamp + "AOSLO" + "\\";
+					//parent->m_VideoFolder = g_ICANDIParams.VideoFolderPath +msg; was before michen+wolf
 					CreateDirectory(parent->m_VideoFolder, NULL);
 					initials.Empty();
+					parent->m_nVideoNum =0;
 				}
 				else if (ext == "VP") { //load prefix //12/15/2011
 					g_viewMsgVideo->SetDlgItemText(IDC_EDITBOX_PREFIX, msg);
@@ -4000,7 +4013,7 @@ DWORD WINAPI CICANDIDoc::ThreadNetMsgProcess(LPVOID pParam)
 						g_viewMsgVideo->SendMessage(WM_MOVIE_SEND, 0, STABILIZATION_GO);
 						break;
 					case 'V': //record video
-						g_viewMsgVideo->PostMessage(WM_MOVIE_SEND, 0, SAVE_VIDEO_FLAG);
+						g_viewMsgVideo->SendMessage(WM_MOVIE_SEND, 0, SAVE_VIDEO_FLAG);
 					break;
 			}
 		}
@@ -5977,4 +5990,18 @@ void CICANDIDoc::Load_Default_Stimulus(bool inv)
 	g_iStimulusSizeX_IR    = aoslo_movie.stim_rd_nx;
 
 	g_bStimulusOn = g_bStimulusOn_bk;
+}
+bool CICANDIDoc::SendNetMessage(CString message){
+
+	if (m_ncListener_IGUIDE->IsConnected())
+	{	
+		char data[256];
+		sprintf(data, "%s", message);
+		int res = m_ncListener_IGUIDE->Send(data, 256, 0);
+		if (res > 0)
+			return true;
+	}
+
+	return false;
+
 }

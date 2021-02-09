@@ -115,6 +115,7 @@ public:
 	BOOL  m_bSymbol;
 	void  LoadSymbol(CString filename="", unsigned short* stim_data=NULL, int width=0, int height=0);
 	BOOL  LoadStimVideo(CString *filename, int i);
+	bool SendNetMessage(CString message);
 
 	virtual ~CICANDIDoc();
 #ifdef _DEBUG
@@ -188,6 +189,7 @@ public:
 	void StopPlayback();
 	int	 saveBitmap();
 	void Load_Default_Stimulus(bool inv);
+	void GetSysTime(CString &buf);
 //	int UpdateRuntimeRegisters(unsigned char *);
 //	int I2CController(UINT32 regDataW, BYTE *reg_val, BOOL bI2Cread);
 //	int ReadWriteI2CRegister(BOOL bRead, UINT32 slave_addr, BYTE regAddr, BYTE regValI, BYTE *regValO);
@@ -211,6 +213,7 @@ public:
 	BOOL	 m_bExtCtrl;
 	short	m_nVideoNum;
 	CString m_VideoFolder;
+	CString m_VideoTimeStamp;
 
 	//Stimulus location recovery
 	CLSID	pBmpEncoder;

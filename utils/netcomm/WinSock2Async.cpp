@@ -700,7 +700,7 @@ bool CWinSock2Async::Accept( CWinSock2Async *pSockNew, sockaddr* lpSockAddr, int
 	if( sockNew == INVALID_SOCKET )
 		return false;
 
-	return pSockNew->SetupEvents( sockNew );
+	return m_bConnected = pSockNew->SetupEvents( sockNew );
 }
 
 
